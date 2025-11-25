@@ -14,3 +14,9 @@
 3. 추출한 csv 파일을 사용할 오브젝트명에 맞게 파일명 변경한 뒤 csv 폴더에 모두 저장
 
 4. python 파일 실행시 yaml 폴더에 변환된 형태로 제공
+
+
+
+TODO
+- Description 기능 제공
+- README 가이드 수정
