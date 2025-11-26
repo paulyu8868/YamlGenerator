@@ -8,6 +8,7 @@
 
 2. csv 파일 출력
 <img width="139" height="200" alt="image" src="https://github.com/user-attachments/assets/75b7ad95-fcca-40e4-ae7f-cd8499a064e4" />
+
 - 프렙의 출력 화면에서 csv 파일을 먼저 추출
 
 
@@ -18,5 +19,12 @@
 
 
 TODO
-- Description 기능 제공
-- README 가이드 수정
+- 1)int타입인 경우와 ID가 모두 숫자인 경우 인식 
+- +)Description 기능 제공
+- +)README 가이드 수정
+
+Updates:
+<2025.11.26>
+- date 타입 인식 오류 수정
+- ID 인식 오류 수정(float 타입만 number로 인식하도록 변경)
+
