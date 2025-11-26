@@ -1,30 +1,46 @@
 import pandas as pd
 import yaml
 from pathlib import Path
+from dateutil.parser import parse
+import re
+
+def is_date(val_str):
+    date_pattern = re.compile(r'^\d{4}[-/]\d{1,2}[-/]\d{1,2}$')
+    return bool(date_pattern.match(val_str))
 
 
-def columnType(series): # 해당 컬럼의 type 반환
+def columnType(series, columnName): # 해당 컬럼의 type 반환
     # null 제거
     series = series.dropna()
     
     if len(series) == 0:
         return {'type': 'string'}  # 디폴트: string
     
+    
     # 컬럼 Data Type
     dtype = series.dtype
     
-    # 숫자타입
-    if pd.api.types.is_integer_dtype(dtype) or pd.api.types.is_float_dtype(dtype):
+    # # 숫자타입
+    # if pd.api.types.is_integer_dtype(dtype) or pd.api.types.is_float_dtype(dtype):
+    #     return {'type': 'number'}
+
+    '''
+    TODO: ID값이 모두 숫자일경우 number로 인식하는 문제 해결
+    - 임시로 float만 처리하도록 해둠
+    - 필요에 따라 커스텀 or 다른 방법 제시
+    '''
+    if pd.api.types.is_float_dtype(dtype): # Float 타입만 숫자로
         return {'type': 'number'}
     
     # Date, DateTime 체크
-    sample = series.iloc[0] # 샘플 데이터 추출
+    sample = str(series.iloc[0]) # 샘플 데이터 추출
     hyphenCnt = sample.count('-')
     timeDivCnt = sample.count(':')
 
     if hyphenCnt==2 and timeDivCnt>=2: # DateTime
         return {'type': 'string', 'format': 'date-time'}
-    elif hyphenCnt==2: # Date
+    
+    if is_date(sample):
         return {'type': 'string', 'format': 'date'}
     
     # 모두 아니면 string
@@ -44,7 +60,7 @@ def generate_schema_from_csv(objectName):
     
     for column in df.columns:
         series = df[column] # 한 컬럼 데이터 추출
-        field_type_info = columnType(series)
+        field_type_info = columnType(series, columnName=column)
         properties[column] = field_type_info
     
 
@@ -69,6 +85,7 @@ def schemaToYaml(schema, path):
         return
     with open(path, 'w', encoding='utf-8') as f:
         yaml.dump(schema, f, default_flow_style=False, sort_keys=False, allow_unicode=True)
+        print(f"{path} 생성 완료")
 
 
 if __name__ == "__main__":
